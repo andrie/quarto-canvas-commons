@@ -37,9 +37,10 @@ test('the starter project has the pieces a first build needs', () => {
   assert.doesNotMatch(read('template/deck.qmd'), /include-in-header|motion-canvas/);
 });
 
-function render(fixture) {
+function render(file) {
+  const fixture = path.basename(file);
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'cc-ext-'));
-  fs.copyFileSync(path.join(repo, 'tests/fixtures', fixture), path.join(dir, fixture));
+  fs.copyFileSync(path.join(repo, file), path.join(dir, fixture));
   fs.cpSync(path.join(repo, '_extensions'), path.join(dir, '_extensions'), {recursive: true});
   const r = spawnSync('quarto', ['render', fixture], {cwd: dir, encoding: 'utf8'});
   assert.equal(r.status, 0, r.stderr);
@@ -48,7 +49,7 @@ function render(fixture) {
 }
 
 test('shortcode options become attributes and one style attribute', {skip: !hasQuarto && 'quarto is not installed'}, () => {
-  const {dir, players} = render('shortcodes.qmd');
+  const {dir, players} = render('tests/fixtures/shortcodes.qmd');
   const by = (name) => players.find((p) => p.includes(`/${name}.js`));
   assert.equal(by('plain'), '<canvas-commons-player src="./animations/src/plain.js">');
   assert.match(by('width'), /style="width:50%;"/, 'width goes inside style');
@@ -61,21 +62,21 @@ test('shortcode options become attributes and one style attribute', {skip: !hasQ
 });
 
 test('the old motion-canvas shortcode still works and warns once', {skip: !hasQuarto && 'quarto is not installed'}, () => {
-  const {dir, players, log} = render('shortcodes.qmd');
+  const {dir, players, log} = render('tests/fixtures/shortcodes.qmd');
   assert.ok(players.some((p) => p.includes('/old.js')));
   assert.equal((log.match(/shortcode is now/g) ?? []).length, 1);
   fs.rmSync(dir, {recursive: true});
 });
 
 test('the deck loads the bundle before the slide script, once', {skip: !hasQuarto && 'quarto is not installed'}, () => {
-  const {dir, html} = render('shortcodes.qmd');
+  const {dir, html} = render('tests/fixtures/shortcodes.qmd');
   const scripts = [...html.matchAll(/<script src="([^"]*canvas-commons-[a-z]+\.js)"/g)].map((m) => path.basename(m[1]));
   assert.deepEqual(scripts, ['canvas-commons-bundle.js', 'canvas-commons-slides.js']);
   fs.rmSync(dir, {recursive: true});
 });
 
 test('the player learns how far the page is from the project root', {skip: !hasQuarto && 'quarto is not installed'}, () => {
-  const {dir, html} = render('shortcodes.qmd');
+  const {dir, html} = render('tests/fixtures/shortcodes.qmd');
   assert.match(html, /<meta name="canvas-commons:offset" content=".\/">/);
   fs.rmSync(dir, {recursive: true});
 
@@ -92,4 +93,10 @@ test('the licence and the third-party notices for the bundle are present', () =>
   assert.match(read('LICENSE'), /^MIT License/);
   const notices = read('_extensions/andrie/canvas-commons/THIRD-PARTY-NOTICES.md');
   for (const pkg of ['@canvas-commons/core', '@canvas-commons/player']) assert.ok(notices.includes(`## ${pkg} `), pkg);
+});
+
+test('example.qmd renders', {skip: !hasQuarto && 'quarto is not installed'}, () => {
+  const {dir, players} = render('example.qmd');
+  assert.equal(players.length, 1, 'one live player; the escaped shortcode in the code block is not rendered');
+  fs.rmSync(dir, {recursive: true});
 });

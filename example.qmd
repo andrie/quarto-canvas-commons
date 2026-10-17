@@ -1,0 +1,33 @@
+---
+title: "Canvas Commons in Quarto"
+format:
+  revealjs:
+    width: 1920
+    height: 1080
+    resources:
+      - dist/**
+---
+
+## One shortcode, one animation
+
+The scene is a built Canvas Commons file, given relative to `dist/`:
+
+```markdown
+{{{< canvas-commons ./animations/src/smoke.js fullscreen=true >}}}
+```
+
+<!-- The next slide needs the starter's scene built first: copy template/animations here and run `npm --prefix animations install && npm --prefix animations run build`. Without it the player stays empty. -->
+
+## The smoke scene {.hidetitle}
+
+{{< canvas-commons ./animations/src/smoke.js fullscreen=true >}}
+
+## Options
+
+| Option | Effect |
+|--------|--------|
+| `fullscreen=true` | Fill the slide |
+| `width=50%` | Width of the player |
+| `loop=false` | Stop on the last frame |
+| `auto=false` | Do not start on arrival |
+| `background=true` | Put it behind the slide's content |
