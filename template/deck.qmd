@@ -1,0 +1,15 @@
+---
+title: "Untitled deck"
+format:
+  revealjs:
+    width: 1920
+    height: 1080
+    resources:
+      - dist/**
+---
+
+## Smoke test {.hidetitle}
+
+<!-- Toolchain proof. Once your first real scene builds, delete this slide, then delete animations/src/smoke.ts and animations/src/scenes/smoke.tsx, and remove "./src/smoke.ts" from animations/vite.config.ts. -->
+
+{{< canvas-commons ./animations/src/smoke.js fullscreen=true >}}

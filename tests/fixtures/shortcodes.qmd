@@ -1,0 +1,28 @@
+---
+title: "Shortcode fixture"
+format: revealjs
+---
+
+## Plain
+
+{{< canvas-commons ./animations/src/plain.js >}}
+
+## Width
+
+{{< canvas-commons ./animations/src/width.js width=50% >}}
+
+## Fullscreen
+
+{{< canvas-commons ./animations/src/full.js fullscreen=true loop=false >}}
+
+## Opt out of autoplay
+
+{{< canvas-commons ./animations/src/manual.js auto=false auto >}}
+
+## Background
+
+{{< canvas-commons ./animations/src/back.js background=true auto >}}
+
+## Old name
+
+{{< motion-canvas ./animations/src/old.js auto fullscreen=true >}}

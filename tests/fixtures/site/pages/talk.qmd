@@ -1,0 +1,8 @@
+---
+title: Talk
+format: revealjs
+---
+
+## Scene
+
+{{< canvas-commons ./animations/src/smoke.js fullscreen=true >}}
