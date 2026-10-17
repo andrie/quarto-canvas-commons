@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: quarto-dev/quarto-actions/setup@v2
+      - name: The committed player bundle matches a fresh build
+        run: bash scripts/build-player.sh --check
+      - name: The starter carries the current extension
+        run: bash scripts/sync-template.sh --check
+      - name: Tests
+        run: node --test tests/*.test.js
+
+  starter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: quarto-dev/quarto-actions/setup@v2
+      - name: Build and render the starter project
+        working-directory: template
+        run: |
+          make install
+          make quarto
+          test -f dist/animations/src/smoke.js
+          grep -q 'canvas-commons-bundle.js' deck.html
