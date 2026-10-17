@@ -87,3 +87,9 @@ test('the player learns how far the page is from the project root', {skip: !hasQ
   assert.match(fs.readFileSync(path.join(site, '_site/pages/talk.html'), 'utf8'), /<meta name="canvas-commons:offset" content="..\/">/);
   fs.rmSync(site, {recursive: true});
 });
+
+test('the licence and the third-party notices for the bundle are present', () => {
+  assert.match(read('LICENSE'), /^MIT License/);
+  const notices = read('_extensions/andrie/canvas-commons/THIRD-PARTY-NOTICES.md');
+  for (const pkg of ['@canvas-commons/core', '@canvas-commons/player']) assert.ok(notices.includes(`## ${pkg} `), pkg);
+});
